@@ -106,18 +106,10 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         emit WinnerPicked(recentWinner);
     }
 
-    function checkUpkeepConditios() internal view returns (bool) {
-        bool isOpen = (s_raffleState == RaffleState.OPEN);
-        bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
-        bool hasPlayers = (s_players.length > 0);
-        bool hasBalance = (address(this).balance > 0);
-        return (isOpen && timePassed && hasPlayers && hasBalance);
-    }
-
     function checkUpkeep(
-        bytes calldata /* checkData */
+        bytes memory /* checkData */
     )
-        external
+        public
         view
         override
         returns (
@@ -125,13 +117,17 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
             bytes memory /* performData */
         )
     {
-        upkeepNeeded = checkUpkeepConditios();
+        bool isOpen = (s_raffleState == RaffleState.OPEN);
+        bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
+        bool hasPlayers = (s_players.length > 0);
+        bool hasBalance = (address(this).balance > 0);
+        upkeepNeeded = (isOpen && timePassed && hasPlayers && hasBalance);
     }
 
     function performUpkeep(
         bytes calldata /* performData */
     ) external override {
-        bool upkeepNeeded = checkUpkeepConditios();
+        (bool upkeepNeeded, ) = checkUpkeep("");
         if (!upkeepNeeded) {
             revert Raffle__UpkeepNotNeeded(address(this).balance, s_players.length, uint8(s_raffleState));
         }
