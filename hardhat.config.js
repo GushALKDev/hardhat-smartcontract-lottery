@@ -5,8 +5,11 @@ require("solidity-coverage")
 require("hardhat-gas-reporter")
 require("hardhat-contract-sizer")
 require("dotenv").config()
+require("@nomiclabs/hardhat-web3")
+require("@nomiclabs/hardhat-ethers")
 
 const GOERLI_URL = process.env.GOERLI_URL
+const ARBITRUM_URL = process.env.ARBITRUM_URL
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
@@ -22,6 +25,12 @@ module.exports = {
             chainId: 5,
             blockConfirmations: 6,
             url: GOERLI_URL,
+            accounts: [PRIVATE_KEY],
+        },
+        arbitrum: {
+            chainId: 42161,
+            blockConfirmations: 6,
+            url: ARBITRUM_URL,
             accounts: [PRIVATE_KEY],
         },
     },
@@ -41,5 +50,13 @@ module.exports = {
         player: {
             default: 1,
         },
+    },
+    etherscan: {
+        apiKey: {
+            goerli: ETHERSCAN_API_KEY,
+        },
+    },
+    mocha: {
+        timeout: 300000, // 300 seconds max.
     },
 }

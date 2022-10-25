@@ -15,3 +15,4 @@
 # Install Hardhat shorthand
 
     yarn global add hardhat-shorthand --> "hh" is now the same than "yarn hardhat"
+  
